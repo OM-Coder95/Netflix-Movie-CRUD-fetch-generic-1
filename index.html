@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+
+<body>
+    <div class="container pt-5 mb-5">
+        <div class="row">
+            <div class="col-6">
+                <a href="index.html" class="logo">
+                    <img src="./assets/img/netflixLogo.svg" title="logo" alt="Logo">
+                </a>
+            </div>
+            <div class="col-6 text-right align-self-center">
+                <button type="button" class="btn btn-sm net-pri-btn" id="showModelBtn">Add Movie</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- content -->
+    <div class="container-fluid">
+        <div class="row" id="movieContainer">
+
+            <div class="col-md-3">
+                <div class="card movieCard">
+                    <!-- card Header -->
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-10">
+                                <h4 class="m-0">Sita Raman</h4>
+                                <small class="updatedAt">sddjlkdsjlf</small>
+                            </div>
+                            <div class="col-2">
+                                <h5 class="m-0"><span class="badge badge-success">9.9</span></h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body py-0">
+                        <figure class="m-0">
+                            <img src="https://wallpapercave.com/wp/wp11393789.jpg" alt="sitaraman movie" title="">
+                            <figcaption>
+                                <h5>SitaRaman</h5>
+                                <p>Lorem ipsum dolor sit amet consectetur adipi Lorem, ipsum dolor sit amet
+                                    consectetur
+                                    adipisicing elit. Excepturi quisquam omnis, optio placeat vero odio at autem
+                                    cupiditate impedit nam odit sed quod nemo delectus voluptates quidem. Nulla,
+                                    iste
+                                    provident! sicing elit. Natus placea quisquam.</p>
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <!-- Card Footer -->
+                    <div class="card-footer d-flex justify-content-between">
+                        <button class="btn btn-sm text-white net-sec-btn">Edit</button>
+                        <button class="btn btn-sm net-pri-btn">Remove</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="backdrop" id="backdrop"></div>
+    <!-- MovieForm -->
+    <div class="movieModal" id="movieModal">
+        <form id="movieForm">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <h3 class="m-0">Add Movie</h3>
+                    <i role="button" class="fa-solid fa-xmark fa-2x" id="closeIcon"></i>
+
+                </div>
+                <div class="card-body">
+
+                    <div class="form-group">
+                        <label for="movieName">Movie Name</label>
+                        <input type="text" class="form-control" id="movieName">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="movieImg">Movie Image</label>
+                        <input type="text" class="form-control" id="movieImg">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="movieDescripion">Movie Description</label>
+                        <textarea type="text" class="form-control" rows="3" id="movieDescripion"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="movieRating">Movie Rating</label>
+                        <select id="movieRating" class="form-control">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <button type="submit" class="btn btn-sm net-sec-btn" id="submitBtn">Add Movie</button>
+                    <button type="button" class="btn btn-sm net-pri-btn" id="closeBtn">Close</button>
+
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="./assets/js/data.js"></script>
+    <script src="./assets/js/app.js"></script>
+</body>
+
+</html>
