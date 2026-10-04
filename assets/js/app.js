@@ -19,9 +19,10 @@ const movieModal = document.getElementById("movieModal");
 // form buttons
 const showModelBtn = document.getElementById("showModelBtn");
 const closeIcon = document.getElementById("closeIcon");
+const closeBtn = document.getElementById("closeBtn");
 
 const submitBtn = document.getElementById("submitBtn");
-const closeBtn = document.getElementById("closeBtn");
+const updateBtn = document.getElementById("updateBtn");
 
 const BASE_URL = `https://fetch-movie-1-default-rtdb.firebaseio.com`;
 
@@ -50,7 +51,11 @@ function nestedToArrObj(res) {
 function toggleFormBackdrop() {
   backdrop.classList.toggle("active");
   movieModal.classList.toggle("active");
-  movieForm.reset();
+  if (!movieModal.classList.contains("active")) {
+    movieForm.reset();
+    updateBtn.classList.add("d-none");
+    submitBtn.classList.remove("d-none");
+  }
 }
 
 // setRating
@@ -145,6 +150,8 @@ function createDiv(newMovie) {
 
   div.className = `col-md-3 mb-3`;
 
+  div.id = newMovie.id;
+
   div.innerHTML = `
   <div class="card movieCard">
                     <div class="card-header">
@@ -168,7 +175,7 @@ function createDiv(newMovie) {
                         </figure>
                     </div>
                     <div class="card-footer d-flex justify-content-between">
-                        <button class="btn btn-sm text-white net-sec-btn">Edit</button>
+                        <button onclick="editMovie(this)" class="btn btn-sm text-white net-sec-btn">Edit</button>
                         <button class="btn btn-sm net-pri-btn">Remove</button>
                     </div>
                 </div>
@@ -204,7 +211,7 @@ function rendering(arr) {
 
   arr.forEach((movieArr) => {
     result += `
-      <div class="col-md-3 mb-3">
+      <div class="col-md-3 mb-3" id="${movieArr.id}">
               <div class="card movieCard">
                     <div class="card-header">
                         <div class="row">
@@ -227,7 +234,7 @@ function rendering(arr) {
                         </figure>
                     </div>
                     <div class="card-footer d-flex justify-content-between">
-                        <button class="btn btn-sm text-white net-sec-btn">Edit</button>
+                        <button onclick="editMovie(this)" class="btn btn-sm text-white net-sec-btn">Edit</button>
                         <button class="btn btn-sm net-pri-btn">Remove</button>
                     </div>
                 </div>
@@ -235,6 +242,27 @@ function rendering(arr) {
     `;
   });
   movieContainer.innerHTML = result;
+}
+
+// edit
+
+function editMovie(ele) {
+  let editId = ele.closest(".col-md-3").id;
+  state.editId = editId;
+
+  toggleFormBackdrop();
+  let editObj = state.movieArr.find((ele) => ele.id === editId);
+
+  movieName.value = editObj.movieName;
+  movieImg.value = editObj.movieImg;
+  createdAt.value = editObj.createdAt;
+  movieDescripion.value = editObj.movieDescripion;
+  movieRating.value = editObj.movieRating;
+  movieDate.value = editObj.date;
+  movieGenre.value = editObj.genre;
+
+  updateBtn.classList.remove("d-none");
+  submitBtn.classList.add("d-none");
 }
 
 movieForm.addEventListener("submit", onMovieAdd);
