@@ -36,6 +36,17 @@ let state = {
 
 // Functions
 
+// nestedToArrObj
+
+function nestedToArrObj(res) {
+  for (const key in res) {
+    res[key].id = key;
+    state.movieArr.push(res[key]);
+  }
+}
+
+// toggleFromBackdrop
+
 function toggleFormBackdrop() {
   backdrop.classList.toggle("active");
   movieModal.classList.toggle("active");
@@ -98,7 +109,6 @@ function makeAPICall(url, methodType, msgBody = null) {
 function onMovieAdd(event) {
   event.preventDefault();
 
-  toggleFormBackdrop();
   let newMovie = {
     movieName: movieName.value.trim(),
     movieImg: movieImg.value.trim(),
@@ -109,7 +119,7 @@ function onMovieAdd(event) {
     date: movieDate.value,
     genre: movieGenre.value.trim(),
   };
-  
+
   toggleSpinner();
   makeAPICall(MOVIE_URL, "POST", newMovie)
     .then((res) => {
@@ -120,6 +130,8 @@ function onMovieAdd(event) {
       state.movieArr.push(newMovie);
 
       createDiv(newMovie);
+
+      toggleFormBackdrop();
     })
     .catch((err) => {
       snackbar(err.message, "error");
@@ -131,7 +143,7 @@ function onMovieAdd(event) {
 function createDiv(newMovie) {
   let div = document.createElement("div");
 
-  div.className = `col-md-3`;
+  div.className = `col-md-3 mb-3`;
 
   div.innerHTML = `
   <div class="card movieCard">
@@ -162,6 +174,67 @@ function createDiv(newMovie) {
                 </div>
   `;
   movieContainer.append(div);
+}
+
+// Read
+
+function showOnUI() {
+  toggleSpinner();
+  makeAPICall(MOVIE_URL, "GET")
+    .then((res) => {
+      cl(res);
+
+      nestedToArrObj(res);
+
+      cl(state.movieArr);
+
+      rendering(state.movieArr);
+    })
+    .catch((err) => {
+      snackbar(err.message, "error");
+    });
+}
+
+showOnUI();
+
+// rendering
+
+function rendering(arr) {
+  let result = "";
+
+  arr.forEach((movieArr) => {
+    result += `
+      <div class="col-md-3 mb-3">
+              <div class="card movieCard">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-10">
+                                <h4 class="m-0">${movieArr.movieName}</h4>
+                                <small class="updatedAt">sddjlkdsjlf</small>
+                            </div>
+                            <div class="col-2">
+                                <h5 class="m-0"><span class="badge ${setRating(movieArr.movieRating)}">${movieArr.movieRating}</span></h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body py-0">
+                        <figure class="m-0">
+                            <img src="${movieArr.movieImg}" alt="${movieArr.movieName}" title="${movieArr.movieName}">
+                            <figcaption>
+                                <h5>${movieArr.movieName}</h5>
+                                <p>${movieArr.movieDescripion}</p>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <button class="btn btn-sm text-white net-sec-btn">Edit</button>
+                        <button class="btn btn-sm net-pri-btn">Remove</button>
+                    </div>
+                </div>
+            </div>
+    `;
+  });
+  movieContainer.innerHTML = result;
 }
 
 movieForm.addEventListener("submit", onMovieAdd);
