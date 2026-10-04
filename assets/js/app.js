@@ -37,6 +37,13 @@ let state = {
 
 // Functions
 
+// showUpdatedSmallElement
+
+function showUpdatedSmallElement(updateId) {
+  let col = document.getElementById(updateId);
+  let updatedSmallElement = col.querySelector(".updatedAt");
+  updatedSmallElement.classList.remove("d-none");
+}
 // nestedToArrObj
 
 function nestedToArrObj(res) {
@@ -51,8 +58,8 @@ function nestedToArrObj(res) {
 function toggleFormBackdrop() {
   backdrop.classList.toggle("active");
   movieModal.classList.toggle("active");
+  movieForm.reset();
   if (!movieModal.classList.contains("active")) {
-    movieForm.reset();
     updateBtn.classList.add("d-none");
     submitBtn.classList.remove("d-none");
   }
@@ -158,7 +165,8 @@ function createDiv(newMovie) {
                         <div class="row">
                             <div class="col-10">
                                 <h4 class="m-0">${newMovie.movieName}</h4>
-                                <small class="updatedAt">sddjlkdsjlf</small>
+                                <small class="createdAt">Created At: ${newMovie.createdAt}</small><br>
+                                <small class="updatedAt d-none">Updated At: sddjlkdsjlf</small>
                             </div>
                             <div class="col-2">
                                 <h5 class="m-0"><span class="badge ${setRating(newMovie.movieRating)}">${newMovie.movieRating}</span></h5>
@@ -217,7 +225,8 @@ function rendering(arr) {
                         <div class="row">
                             <div class="col-10">
                                 <h4 class="m-0">${movieArr.movieName}</h4>
-                                <small class="updatedAt">sddjlkdsjlf</small>
+                                <small class="createdAt">Created At: ${movieArr.createdAt}</small><br>
+                                <small class="updatedAt d-none">Updated At: sddjlkdsjlf</small>
                             </div>
                             <div class="col-2">
                                 <h5 class="m-0"><span class="badge ${setRating(movieArr.movieRating)}">${movieArr.movieRating}</span></h5>
@@ -265,8 +274,84 @@ function editMovie(ele) {
   submitBtn.classList.add("d-none");
 }
 
+// update
+
+function onMovieUpdate() {
+  let updateId = state.editId;
+
+  showUpdatedSmallElement(updateId);
+  let UPDATE_URL = `${BASE_URL}/movie/${updateId}.json`;
+
+  let updatedObj = {
+    movieName: movieName.value.trim(),
+    movieImg: movieImg.value.trim(),
+    createdAt: createdAt.value.trim(),
+    updatedAt: new Date().toLocaleString(),
+    movieDescripion: movieDescripion.value.trim(),
+    movieRating: movieRating.value,
+    date: movieDate.value,
+    genre: movieGenre.value.trim(),
+    id: updateId,
+  };
+
+  toggleSpinner();
+  makeAPICall(UPDATE_URL, "PATCH", updatedObj)
+    .then((res) => {
+      cl(res);
+
+      let getIndex = state.movieArr.findIndex((ele) => ele.id === updateId);
+      state.movieArr[getIndex] = updatedObj;
+
+      updateUI(res);
+      showUpdatedSmallElement(updateId);
+
+      toggleFormBackdrop();
+    })
+    .catch((err) => {
+      snackbar(err.message, "error");
+    });
+}
+
+// function
+
+function updateUI(res) {
+  let div = document.getElementById(res.id);
+
+  div.innerHTML = `
+ <div class="card movieCard">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-10">
+                                <h4 class="m-0">${res.movieName}</h4>
+                                <small class="createdAt">Created At: ${res.createdAt}</small><br>
+                                <small class="updatedAt d-none">Updated At: ${res.updatedAt}</small>
+                            </div>
+                            <div class="col-2">
+                                <h5 class="m-0"><span class="badge ${setRating(res.movieRating)}">${res.movieRating}</span></h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body py-0">
+                        <figure class="m-0">
+                            <img src="${res.movieImg}" alt="${res.movieName}" title="${res.movieName}">
+                            <figcaption>
+                                <h5>${res.movieName}</h5>
+                                <p>${res.movieDescripion}</p>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <button onclick="editMovie(this)" class="btn btn-sm text-white net-sec-btn">Edit</button>
+                        <button class="btn btn-sm net-pri-btn">Remove</button>
+                    </div>
+                </div>
+`;
+}
+
 movieForm.addEventListener("submit", onMovieAdd);
 showModelBtn.addEventListener("click", toggleFormBackdrop);
 closeIcon.addEventListener("click", toggleFormBackdrop);
 closeBtn.addEventListener("click", toggleFormBackdrop);
 backdrop.addEventListener("click", toggleFormBackdrop);
+
+updateBtn.addEventListener("click", onMovieUpdate);
