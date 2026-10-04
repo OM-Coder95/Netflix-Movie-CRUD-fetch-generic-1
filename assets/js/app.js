@@ -142,6 +142,7 @@ function onMovieAdd(event) {
       state.movieArr.push(newMovie);
 
       createDiv(newMovie);
+      snackbar("Movie created successfully!", "success");
 
       toggleFormBackdrop();
     })
@@ -184,7 +185,7 @@ function createDiv(newMovie) {
                     </div>
                     <div class="card-footer d-flex justify-content-between">
                         <button onclick="editMovie(this)" class="btn btn-sm text-white net-sec-btn">Edit</button>
-                        <button class="btn btn-sm net-pri-btn">Remove</button>
+                        <button onclick="removeMovie(this)" class="btn btn-sm net-pri-btn">Remove</button>
                     </div>
                 </div>
   `;
@@ -244,7 +245,7 @@ function rendering(arr) {
                     </div>
                     <div class="card-footer d-flex justify-content-between">
                         <button onclick="editMovie(this)" class="btn btn-sm text-white net-sec-btn">Edit</button>
-                        <button class="btn btn-sm net-pri-btn">Remove</button>
+                        <button onclick="removeMovie(this)" class="btn btn-sm net-pri-btn">Remove</button>
                     </div>
                 </div>
             </div>
@@ -303,9 +304,11 @@ function onMovieUpdate() {
       state.movieArr[getIndex] = updatedObj;
 
       updateUI(res);
+      snackbar("Movie updated successfully!", "success");
       showUpdatedSmallElement(updateId);
 
       toggleFormBackdrop();
+      state.editId = null;
     })
     .catch((err) => {
       snackbar(err.message, "error");
@@ -342,10 +345,47 @@ function updateUI(res) {
                     </div>
                     <div class="card-footer d-flex justify-content-between">
                         <button onclick="editMovie(this)" class="btn btn-sm text-white net-sec-btn">Edit</button>
-                        <button class="btn btn-sm net-pri-btn">Remove</button>
+                        <button onclick="removeMovie(this)" class="btn btn-sm net-pri-btn">Remove</button>
                     </div>
                 </div>
 `;
+}
+
+// remove
+
+function removeMovie(ele) {
+  let removeId = ele.closest(".col-md-3").id;
+
+  const REMOVE_URL = `${BASE_URL}/movie/${removeId}.json`;
+
+  Swal.fire({
+    title: "Are you sure, You want to delete this movie?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      toggleSpinner();
+      makeAPICall(REMOVE_URL, "DELETE")
+        .then((res) => {
+          cl(res);
+
+          let getIndex = state.movieArr.findIndex((ele) => ele.id === removeId);
+
+          state.movieArr.splice(getIndex, 1);
+
+          ele.closest(".col-md-3").remove();
+
+          snackbar("Movie deleted successfully!", "success");
+        })
+        .catch((err) => {
+          snackbar(err.message, "error");
+        });
+    }
+  });
 }
 
 movieForm.addEventListener("submit", onMovieAdd);
